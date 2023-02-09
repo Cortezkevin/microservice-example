@@ -12,6 +12,8 @@ eureka:
 spring:
   cloud:
     gateway:
+      defalut-filters:
+        - TokenRelay
       discovery:
         locator:
           enabled: true
@@ -20,6 +22,8 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+          filters:
+            - RemoveRequestHeader=Cookie
         - id: car-service
           uri: lb://car-service
           predicates:
@@ -28,3 +32,20 @@ spring:
           uri: lb://bike-service
           predicates:
             - Path=/bike/**
+
+  security:
+    oauth2:
+      client:      
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8180/auth/realms/microservice-realm/protocol/openid-connect/auth
+            userinfo-uri: http://localhost:8180/auth/realms/microservice-realm/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+            token-uri: http://localhost:8180/auth/realms/microservice-realm/protocol/openid-connect/token
+        registration:
+          microservice-client: 
+            provider: keycloak
+            client-id: microservice-client
+            client-secret: 02d2409d-1d0d-44ab-ba2f-0ca485adcc3e
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/microservice-client"
