@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
-@EnableEurekaServer
+@EnableEurekaServer //Eureka es un servidor para el registro y localización de microservicios, balanceo de carga y tolerancia a fallos.
 public class EurekaServiceApplication {
 
 	public static void main(String[] args) {

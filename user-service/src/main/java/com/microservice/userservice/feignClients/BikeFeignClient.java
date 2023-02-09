@@ -12,7 +12,6 @@ import java.util.List;
 //  un cliente REST declarativo
 @FeignClient(
     name = "bike-service",
-    url = "http://localhost:8003",
     path = "/bike"
 )
 public interface BikeFeignClient {
