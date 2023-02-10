@@ -7,6 +7,12 @@ import com.microservice.userservice.model.Bike;
 import com.microservice.userservice.model.Car;
 import com.microservice.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,14 +45,28 @@ public class UserService {
         return repository.save(u);
     }
 
-    public List<Car> getCars(int userId){
-        List<Car> cars = restTemplate.getForObject("http://car-service/car/byUser/" + userId, List.class);
-        return cars;
+    public List getCars(int userId){
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpHeaders httpHeaders= new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + jwt.getTokenValue());
+        ResponseEntity<List> cars = restTemplate.exchange(
+                "http://car-service/car/byUser/" + userId,
+                HttpMethod.GET,
+                new HttpEntity<>(httpHeaders),
+                List.class);
+        return cars.getBody();
     }
 
-    public List<Bike> getBikes(int userId){
-        List<Bike> bikes = restTemplate.getForObject("http://bike-service/bike/byUser/" + userId, List.class);
-        return bikes;
+    public List getBikes(int userId){
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpHeaders httpHeaders= new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + jwt.getTokenValue());
+        ResponseEntity<List> bikes = restTemplate.exchange(
+                "http://bike-service/bike/byUser/" + userId,
+                HttpMethod.GET,
+                new HttpEntity<>(httpHeaders),
+                List.class);
+        return bikes.getBody();
     }
 
     public Car createCar(int userId, Car c){
